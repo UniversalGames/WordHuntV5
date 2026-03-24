@@ -1,12 +1,11 @@
 {
-  "background_color": "#ffffff",
-  "dir": "ltr",
-  "display": "standalone",
-  "name": "WordHuntV5",
-  "orientation": "any",
-  "scope": "/",
-  "short_name": "universalgames.github",
-  "start_url": "/",
-  "theme_color": "#000000",
-  "id": "universalgames"
+  "appName": "WordHunt",
+  "version": "1.0",
+  "gameSettings": {
+    "gridSize": 8,
+    "defaultDifficulty": "normal",
+    "maxHints": 3
+  },
+  "themes": ["red", "blue", "green"],
+  "words": ["TIGER", "EAGLE", "SHARK", "WHALE"]
 }
