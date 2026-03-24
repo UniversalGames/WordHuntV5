@@ -12,7 +12,7 @@
 <style>
 /* ══════════════════════════════════════
    MOBILE-FIRST DESIGN SYSTEM
-   AUTO-RESIZE GRID — NEVER HIDDEN
+   FIXED 8x8 GRID — AUTO-RESIZE
 ══════════════════════════════════════ */
 :root {
   --bg:    #000;
@@ -785,7 +785,7 @@ body::after {
     <div class="setup-sec">
       <div class="setup-lbl">Grid Size</div>
       <div class="opt-grid four" id="chSG">
-        <div class="opt-card on" onclick="pickSz(9,8,this)"><span class="opt-card-t">9×9</span><span class="opt-card-s">8 words</span></div>
+        <div class="opt-card on" onclick="pickSz(8,6,this)"><span class="opt-card-t">8×8</span><span class="opt-card-s">6 words</span></div>
       </div>
     </div>
     <div class="setup-sec">
@@ -1024,9 +1024,9 @@ const DIRS=[[0,1],[1,0],[0,-1],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]];
 const DN=['','Easy','Normal','Hard','Expert'];
 const AUTO_TIME={1:14,2:11,3:9,4:7};
 
-/* ════════ FIXED GRID SIZE 9x9 ════════ */
-const FIXED_GRID_SIZE = 9;
-const FIXED_WORD_COUNT = 8;
+/* ════════ FIXED GRID SIZE 8x8 ════════ */
+const FIXED_GRID_SIZE = 8;
+const FIXED_WORD_COUNT = 6;
 
 /* ════════ DATA ════════ */
 function dfP(){return{name:'Player',games:0,wins:0,losses:0,bestScore:0,totalScore:0,bestStreak:0,totalTime:0,totalMistakes:0,totalSel:0,coins:0,history:[],owned:['av0','bn0'],eqAv:'av0',eqBn:'bn0'};}
