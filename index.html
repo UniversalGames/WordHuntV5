@@ -1326,8 +1326,8 @@ function addBoardEvents(wrap,areaId,sz,bd,fm,onSel,getFm,cellId,onCommit){
   function clearLine(){const svg=$(getSvgId);if(svg)svg.innerHTML='';}
   function clrSel(){wrap.querySelectorAll('.sel').forEach(e=>e.classList.remove('sel'));}
   function apSel(cells){cells.forEach(([r,c])=>{const el=$(cellId(r,c));if(el&&!getFm()[r+','+c])el.classList.add('sel');});}
-  wrap.addEventListener('pointerdown',e=>{
-    e.preventDefault();
+ wrap.addEventListener('pointerdown',e=>{
+  e.preventDefault();
     const t=cellFromTouch(e.clientX,e.clientY);
     if(!t)return;
     active=true;startCell=t;currentSel=[t];clrSel();apSel([t]);
