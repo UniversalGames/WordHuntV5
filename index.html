@@ -1649,3 +1649,33 @@ window.onload=()=>{
 </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Load JSON Example</title>
+</head>
+<body>
+
+<script>
+// Method 1: Fetch API (Modern way)
+async function loadJSON() {
+    try {
+        const response = await fetch('data.json');
+        const data = await response.json();
+        console.log('JSON Data:', data);
+        console.log('App Name:', data.appName);
+        console.log('Grid Size:', data.gameSettings.gridSize);
+        
+        // Use data in your game
+        document.title = data.appName;
+    } catch (error) {
+        console.error('Error loading JSON:', error);
+    }
+}
+
+// Call the function
+loadJSON();
+</script>
+
+</body>
+</html>
