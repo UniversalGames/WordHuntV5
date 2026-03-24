@@ -766,10 +766,8 @@ body::after {
     <div class="setup-sec">
       <div class="setup-lbl">Grid Size</div>
       <div class="opt-grid four" id="chSG">
-        <div class="opt-card on" onclick="pickSz(8,6,this)"><span class="opt-card-t">8×8</span><span class="opt-card-s">6 words</span></div>
-        <div class="opt-card" onclick="pickSz(10,9,this)"><span class="opt-card-t">10×10</span><span class="opt-card-s">9 words</span></div>
-        <div class="opt-card" onclick="pickSz(12,12,this)"><span class="opt-card-t">12×12</span><span class="opt-card-s">12 words</span></div>
-        <div class="opt-card" onclick="pickSz(14,16,this)"><span class="opt-card-t">14×14</span><span class="opt-card-s">16 words</span></div>
+        <!-- FIXED 9x9 only for challenge mode too -->
+        <div class="opt-card on" onclick="pickSz(9,8,this)"><span class="opt-card-t">9×9</span><span class="opt-card-s">8 words</span></div>
       </div>
     </div>
     <div class="setup-sec">
@@ -1003,15 +1001,15 @@ function tone(freq, type, dur, vol, delay) {
 }
 const SFX = {
   found:  () => { tone(523,'sine',.1,.16); setTimeout(() => tone(659,'sine',.1,.16),70); setTimeout(() => tone(784,'sine',.15,.16),140); },
-  streak: () => { [523,587,659,698,784].forEach((f,i) => setTimeout(() => tone(f,'triangle',.1,.18), i*50)); },
+  streak: () => { [523,587,659,698,784].forEach((f,i)=>setTimeout(()=>tone(f,'triangle',.1,.18),i*50)); },
   miss:   () => tone(200,'sawtooth',.1,.1),
   hint:   () => { tone(440,'sine',.07,.1); setTimeout(() => tone(550,'sine',.1,.1), 100); },
   tick:   () => tone(880,'square',.04,.05),
   urgent: () => { tone(660,'square',.07,.12); setTimeout(() => tone(660,'square',.07,.12), 200); },
-  win:    () => { [523,659,784,1047,1319].forEach((f,i) => setTimeout(() => tone(f,'triangle',.22,.18), i*90)); },
+  win:    () => { [523,659,784,1047,1319].forEach((f,i)=>setTimeout(()=>tone(f,'triangle',.22,.18),i*90)); },
   timeup: () => { tone(220,'sawtooth',.28,.28); setTimeout(() => tone(180,'sawtooth',.28,.28), 200); },
   buy:    () => { tone(880,'sine',.1,.13); setTimeout(() => tone(1100,'sine',.14,.13), 100); },
-  equip:  () => { [440,550,660,880].forEach((f,i) => setTimeout(() => tone(f,'sine',.09,.11), i*50)); },
+  equip:  () => { [440,550,660,880].forEach((f,i)=>setTimeout(()=>tone(f,'sine',.09,.11),i*50)); },
   coin:   () => { tone(1046,'sine',.06,.11); setTimeout(() => tone(1318,'sine',.07,.11), 70); },
   click:  () => tone(440,'sine',.03,.06),
 };
@@ -1037,9 +1035,13 @@ const DIRS=[[0,1],[1,0],[0,-1],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]];
 const DN=['','Easy','Normal','Hard','Expert'];
 const AUTO_TIME={1:14,2:11,3:9,4:7};
 
+/* ════════ FIXED GRID SIZE 9x9 ════════ */
+const FIXED_GRID_SIZE = 9;
+const FIXED_WORD_COUNT = 8;
+
 /* ════════ DATA ════════ */
 function dfP(){return{name:'Player',games:0,wins:0,losses:0,bestScore:0,totalScore:0,bestStreak:0,totalTime:0,totalMistakes:0,totalSel:0,coins:0,history:[],owned:['av0','bn0'],eqAv:'av0',eqBn:'bn0'};}
-function dfST(){return{diff:2,size:10,wcount:9,cat:'Animals',diag:true,rev:true,snd:true,theme:'default'};}
+function dfST(){return{diff:2,cat:'Animals',diag:true,rev:true,snd:true,theme:'default'};}
 let P=dfP(), ST=dfST();
 function loadAll(){try{const d=ls.getItem('whmob_p');if(d)P=Object.assign(dfP(),JSON.parse(d));}catch(e){}try{const d=ls.getItem('whmob_st');if(d)ST=Object.assign(dfST(),JSON.parse(d));}catch(e){}}
 const ls=localStorage;
@@ -1063,7 +1065,7 @@ const $=id=>document.getElementById(id);
 function s(id,v){const e=$(id);if(e)e.textContent=v;}
 
 /* ════════ CHALLENGE SETUP ════════ */
-let chDiff=1,chSz=8,chWc=6,chTime=0;
+let chDiff=1,chSz=FIXED_GRID_SIZE,chWc=FIXED_WORD_COUNT,chTime=0;
 function pickD(d,btn){chDiff=d;document.querySelectorAll('#chDG .opt-card').forEach(b=>b.classList.remove('on'));btn.classList.add('on');upChI();}
 function pickSz(sz,wc,btn){chSz=sz;chWc=wc;document.querySelectorAll('#chSG .opt-card').forEach(b=>b.classList.remove('on'));btn.classList.add('on');upChI();}
 function pickT(t,btn){chTime=t;document.querySelectorAll('#chTG .t-opt').forEach(b=>b.classList.remove('on'));btn.classList.add('on');upChI();}
@@ -1107,7 +1109,7 @@ async function initCG(){
   clearInterval(cgTid);clearInterval(cgCTid);
   cgDone=false;cgScore=0;cgStrk=0;cgBs=0;cgEl=0;cgMist=0;cgTsel=0;
   cgBd=[];cgWs=[];cgPl=[];cgFw=[];cgFm={};
-  const sz=Math.max(5,chSz);
+  const sz=chSz; // FIXED 9
   cgBd=Array.from({length:sz},()=>Array(sz).fill(''));
   s('cgCat',ST.cat);updCG();
   cgTot=chTime===0?AUTO_TIME[chDiff]*chWc:chTime;
@@ -1157,7 +1159,7 @@ function renderCGBoard(sz){
   }
   /* Touch/pointer events on the wrap for CG */
   addBoardEvents(wrap,'cgArea',sz,cgBd,cgFm,
-    (cells)=>cgSel=cells,
+    (cells)=>cgSl=cells,
     ()=>cgFm,
     (r,c)=>`cg${r}_${c}`,
     ()=>cgCheckSel(cgSl)
@@ -1250,15 +1252,15 @@ function changeCat(c,btn){SFX.click();ST.cat=c;document.querySelectorAll('#catCh
 
 function pickW(){
   const minL=Math.max(3,[0,3,3,5,6][ST.diff]||3);
-  const maxL=Math.min([0,7,9,11,14][ST.diff]||9,ST.size-2);
+  const maxL=Math.min([0,7,9,11,14][ST.diff]||9,FIXED_GRID_SIZE-2);
   const pool=shuf(Object.values(BANKS).flat().filter(w=>w.length>=minL&&w.length<=maxL));
-  const seen=new Set(),res=[];for(const w of pool){if(!seen.has(w)){seen.add(w);res.push(w);}if(res.length>=ST.wcount)break;}
+  const seen=new Set(),res=[];for(const w of pool){if(!seen.has(w)){seen.add(w);res.push(w);}if(res.length>=FIXED_WORD_COUNT)break;}
   return res;
 }
 
 function newGame(){
   clearInterval(timerID);elapsed=0;gameOver=false;score=0;streak=0;bestStreak=0;mistakes=0;totalSel=0;hintsLeft=MAX_HINTS;
-  const sz=Math.max(5,ST.size);
+  const sz=FIXED_GRID_SIZE;
   board=Array.from({length:sz},()=>Array(sz).fill(''));
   words=[];placements=[];foundWords=[];foundMap={};
   words=pickW();if(!words.length){ST.cat=Object.keys(BANKS)[0];words=pickW();}
@@ -1396,7 +1398,7 @@ function doHint(){
 
 function winGame(){
   if(gameOver)return;clearInterval(timerID);gameOver=true;SFX.win();
-  const sB=ST.size*8,dB=ST.diff*35,tB=Math.max(0,380-elapsed)*2;score+=sB+dB+tB;
+  const sB=FIXED_GRID_SIZE*8,dB=ST.diff*35,tB=Math.max(0,380-elapsed)*2;score+=sB+dB+tB;
   const coins=Math.floor(score/10)+Math.floor(bestStreak*3);
   P.coins+=coins;P.games++;P.wins++;P.totalScore+=score;P.totalTime+=elapsed;
   P.totalMistakes+=mistakes;P.totalSel+=totalSel;
@@ -1509,7 +1511,7 @@ function fireConfetti(){
 /* ════════ RESIZE ════════ */
 window.addEventListener('resize',()=>{
   if($('pg-game').classList.contains('on')&&!gameOver){
-    const sz=ST.size,cp=computeCpx('gArea',sz),gap=2,pad=6,tot=sz*cp+(sz-1)*gap+pad*2;
+    const sz=FIXED_GRID_SIZE,cp=computeCpx('gArea',sz),gap=2,pad=6,tot=sz*cp+(sz-1)*gap+pad*2;
     $('board').style.gridTemplateColumns=`repeat(${sz},${cp}px)`;
     document.querySelectorAll('#board .cell').forEach(el=>{el.style.width=el.style.height=cp+'px';el.style.fontSize=Math.max(8,Math.floor(cp*.38))+'px';});
     $('bwrap').style.width=$('bwrap').style.height=tot+'px';
