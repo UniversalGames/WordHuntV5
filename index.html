@@ -12,8 +12,7 @@
 <style>
 /* ══════════════════════════════════════
    MOBILE-FIRST DESIGN SYSTEM
-   Aesthetic: Dark Neon Terminal
-   Built for phones — every pixel counts
+   AUTO-RESIZE GRID — NEVER HIDDEN
 ══════════════════════════════════════ */
 :root {
   --bg:    #000;
@@ -40,12 +39,12 @@
   --f8:#00ffcc; --f9:#ff7777;
 
   /* Safe areas */
-  --sat: env(safe-area-inset-top,    0px);
+  --sat: env(safe-area-inset-top, 0px);
   --sab: env(safe-area-inset-bottom, 0px);
-  --sal: env(safe-area-inset-left,   0px);
-  --sar: env(safe-area-inset-right,  0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
 
-  /* Layout tokens — set by JS */
+  /* Layout tokens — dynamic */
   --header-h: 56px;
   --footer-h: 52px;
   --wordbar-h: 60px;
@@ -66,7 +65,8 @@ html, body {
   -webkit-font-smoothing: antialiased;
   user-select: none;
   -webkit-user-select: none;
-  touch-action: none; /* prevent scroll on game */
+  touch-action: none;
+  position: relative;
 }
 
 /* scanlines */
@@ -304,6 +304,7 @@ body::after {
 
 /* ══════════════════════════════════════
    GAME SCREEN (both classic + challenge)
+   AUTO-RESIZE GRID — NEVER CUT OFF
 ══════════════════════════════════════ */
 #pg-game, #pg-chgame { background: var(--bg); }
 
@@ -363,11 +364,17 @@ body::after {
 .ch-timerdisplay.urgent { color: var(--R3); animation: urgBlink .35s ease-in-out infinite; }
 @keyframes urgBlink { 0%,100%{opacity:1;} 50%{opacity:.3;} }
 
-/* ── GRID AREA ── */
+/* ── GRID AREA — AUTO-RESIZE ── */
 .grid-area {
-  flex: 1; display: flex; align-items: center; justify-content: center;
-  overflow: hidden; position: relative; background: var(--bg);
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  background: var(--bg);
   padding: 8px;
+  min-height: 0;
 }
 /* Corner decorations */
 .grid-area::before {
@@ -381,26 +388,38 @@ body::after {
   pointer-events: none; z-index: 5;
 }
 #bwrap, #cgBwrap {
-  position: relative; overflow: hidden;
-  background: var(--bg2); border: 1px solid var(--rim);
+  position: relative;
+  overflow: hidden;
+  background: var(--bg2);
+  border: 1px solid var(--rim);
   box-shadow: 0 0 40px rgba(0,0,0,.8), 0 0 0 1px var(--Rb);
   clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  /* Size set dynamically by JS */
 }
 #board-svg, #cg-board-svg {
   position: absolute; inset: 0; pointer-events: none; z-index: 5;
 }
 #board, #cgBoard {
-  display: grid; position: relative; z-index: 2;
-  padding: 6px; gap: 2px;
+  display: grid;
+  position: relative;
+  z-index: 2;
+  padding: 6px;
+  gap: 2px;
+  /* Grid template set by JS */
 }
 .cell {
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'JetBrains Mono', monospace; font-weight: 500;
-  text-transform: uppercase; color: var(--t2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: var(--t2);
   border: 1px solid var(--rim);
   letter-spacing: .1px;
   transition: background .06s, color .06s;
   cursor: crosshair;
+  /* Size set by JS */
 }
 .cell.sel {
   background: var(--Bb) !important;
@@ -766,7 +785,6 @@ body::after {
     <div class="setup-sec">
       <div class="setup-lbl">Grid Size</div>
       <div class="opt-grid four" id="chSG">
-        <!-- FIXED 9x9 only for challenge mode too -->
         <div class="opt-card on" onclick="pickSz(9,8,this)"><span class="opt-card-t">9×9</span><span class="opt-card-s">8 words</span></div>
       </div>
     </div>
@@ -808,12 +826,8 @@ body::after {
   </div>
   <div class="word-bar" id="wordBar"></div>
   <div class="action-bar">
-    <!-- Category chips -->
-    <div id="catChips" style="display:flex;gap:5px;flex:1;overflow-x:auto;scrollbar-width:none">
-      <!-- built by JS -->
-    </div>
+    <div id="catChips" style="display:flex;gap:5px;flex:1;overflow-x:auto;scrollbar-width:none"></div>
     <div class="ab-sep"></div>
-    <!-- Hint + New -->
     <div class="hint-wrap">
       <button class="ab-icon-btn" id="hintBtn" onclick="doHint()" title="Hint">?</button>
       <div class="hint-badge" id="hintBadge">3</div>
@@ -867,32 +881,7 @@ body::after {
       </div>
     </div>
   </div>
-  <div id="pfContent" class="scroll-pg" style="padding:0 0 40px">
-    <div class="stat-grid" style="padding:12px 14px 0">
-      <div class="stat-box"><div class="sb-bar" style="background:var(--R)"></div><div class="sb-n" style="color:var(--R3)" id="pfWR">0%</div><div class="sb-l">Win Rate</div><div class="sb-s" id="pfWRs">0W / 0L</div></div>
-      <div class="stat-box"><div class="sb-bar" style="background:var(--B)"></div><div class="sb-n" style="color:var(--B3)" id="pfBS">0</div><div class="sb-l">Best Score</div></div>
-    </div>
-    <div class="stat-grid three" style="padding:8px 14px 0">
-      <div class="stat-box"><div class="sb-bar" style="background:#00ff88"></div><div class="sb-n" style="color:#00ff88" id="pfSK">0</div><div class="sb-l">Streak</div></div>
-      <div class="stat-box"><div class="sb-bar" style="background:#ff8800"></div><div class="sb-n" style="color:#ff9933" id="pfMR">0%</div><div class="sb-l">Mistakes</div></div>
-      <div class="stat-box"><div class="sb-bar" style="background:#ffcc00"></div><div class="sb-n" style="color:#ffd633" id="pfAT">0:00</div><div class="sb-l">Avg Time</div></div>
-    </div>
-    <div class="stat-grid" style="padding:8px 14px 0">
-      <div class="stat-box"><div class="sb-bar" style="background:linear-gradient(90deg,var(--R),var(--B))"></div><div class="sb-n" id="pfOA">0%</div><div class="sb-l">Overall %</div></div>
-      <div class="stat-box"><div class="sb-bar" style="background:#aa44ff"></div><div class="sb-n" style="color:#bb66ff" id="pfG">0</div><div class="sb-l">Games</div></div>
-    </div>
-    <div class="rank-card" style="margin:10px 14px 0">
-      <div class="rk-em" id="pfRkEm">🏅</div>
-      <div class="rk-info">
-        <div class="rk-name" id="pfRkT">Rookie</div>
-        <div class="rk-sub" id="pfRkS">Play more to rank up</div>
-        <div class="rk-pts"><span id="rpC">0 pts</span><span id="rpN">100 to next</span></div>
-        <div class="rk-prog"><div class="rk-fill" id="rpF" style="width:0%"></div></div>
-      </div>
-    </div>
-    <div class="section-label" style="margin-top:10px">Recent Games</div>
-    <div id="pfHist"></div>
-  </div>
+  <div id="pfContent" class="scroll-pg" style="padding:0 0 40px"></div>
 </div>
 
 <!-- ══════════════ SHOP ══════════════ -->
@@ -1109,7 +1098,7 @@ async function initCG(){
   clearInterval(cgTid);clearInterval(cgCTid);
   cgDone=false;cgScore=0;cgStrk=0;cgBs=0;cgEl=0;cgMist=0;cgTsel=0;
   cgBd=[];cgWs=[];cgPl=[];cgFw=[];cgFm={};
-  const sz=chSz; // FIXED 9
+  const sz=chSz;
   cgBd=Array.from({length:sz},()=>Array(sz).fill(''));
   s('cgCat',ST.cat);updCG();
   cgTot=chTime===0?AUTO_TIME[chDiff]*chWc:chTime;
@@ -1139,37 +1128,49 @@ function cgPlaceAll(bd,ws,sz,pls){placeAll(bd,ws,sz,pls,ST.diag,ST.rev);}
 function noiseBoard(bd,sz,diff){const a='ABCDEFGHIJKLMNOPQRSTUVWXYZ';const rng=diff<3?14:26;for(let r=0;r<sz;r++)for(let c=0;c<sz;c++)if(!bd[r][c])bd[r][c]=a[Math.floor(Math.random()*rng)];}
 function cgNoiseBoard(bd,sz,d){noiseBoard(bd,sz,d);}
 
-/* Compute cell pixel size for a given zone element and grid size */
-function computeCpx(zoneId,sz){
-  const z=$(zoneId);if(!z)return 28;
-  const aw=z.offsetWidth-16,ah=z.offsetHeight-16;
-  return Math.max(16,Math.min(52,Math.floor(Math.min(aw,ah)/sz)));
+/* AUTO-RESIZE: Compute cell size based on available space */
+function computeCellSize(areaId, sz){
+  const area = $(areaId);
+  if(!area) return 32;
+  const areaRect = area.getBoundingClientRect();
+  const maxWidth = areaRect.width - 24;
+  const maxHeight = areaRect.height - 24;
+  const available = Math.min(maxWidth, maxHeight);
+  const gap = 2;
+  const padding = 12;
+  const cellSize = Math.floor((available - padding * 2 - (sz - 1) * gap) / sz);
+  return Math.max(22, Math.min(48, cellSize));
 }
 
 function renderCGBoard(sz){
-  const bEl=$('cgBoard'),wrap=$('cgBwrap'),svg=$('cg-board-svg');if(!bEl||!wrap||!svg)return;
-  const cp=computeCpx('cgArea',sz),gap=2,pad=6,tot=sz*cp+(sz-1)*gap+pad*2;
-  bEl.style.gridTemplateColumns=`repeat(${sz},${cp}px)`;bEl.style.gap=gap+'px';bEl.style.padding=pad+'px';
-  wrap.style.width=wrap.style.height=tot+'px';svg.setAttribute('width',tot);svg.setAttribute('height',tot);svg.setAttribute('viewBox',`0 0 ${tot} ${tot}`);
+  const bEl=$('cgBoard'),wrap=$('cgBwrap'),svg=$('cg-board-svg');
+  if(!bEl||!wrap||!svg)return;
+  const cp = computeCellSize('cgArea', sz);
+  const gap=2, pad=6, tot=sz*cp+(sz-1)*gap+pad*2;
+  bEl.style.gridTemplateColumns=`repeat(${sz},${cp}px)`;
+  bEl.style.gap=gap+'px';
+  bEl.style.padding=pad+'px';
+  wrap.style.width=wrap.style.height=tot+'px';
+  svg.setAttribute('width',tot);
+  svg.setAttribute('height',tot);
+  svg.setAttribute('viewBox',`0 0 ${tot} ${tot}`);
   bEl.innerHTML='';
   for(let r=0;r<sz;r++)for(let c=0;c<sz;c++){
-    const el=document.createElement('div');el.className='cell';el.id=`cg${r}_${c}`;
-    el.textContent=cgBd[r][c]||'';el.style.width=el.style.height=cp+'px';el.style.fontSize=Math.max(8,Math.floor(cp*.38))+'px';
+    const el=document.createElement('div');
+    el.className='cell';
+    el.id=`cg${r}_${c}`;
+    el.textContent=cgBd[r][c]||'';
+    el.style.width=el.style.height=cp+'px';
+    el.style.fontSize=Math.max(10,Math.floor(cp*.42))+'px';
     bEl.appendChild(el);
   }
-  /* Touch/pointer events on the wrap for CG */
-  addBoardEvents(wrap,'cgArea',sz,cgBd,cgFm,
-    (cells)=>cgSl=cells,
-    ()=>cgFm,
-    (r,c)=>`cg${r}_${c}`,
-    ()=>cgCheckSel(cgSl)
-  );
+  addBoardEvents(wrap,'cgArea',sz,cgBd,cgFm,(cells)=>cgSl=cells,()=>cgFm,(r,c)=>`cg${r}_${c}`,()=>cgCheckSel(cgSl));
 }
 function renderCGWB(){
   const bar=$('cgWordBar');if(!bar)return;
   const sorted=[...cgWs].sort((a,b)=>cgFw.includes(a)?1:cgFw.includes(b)?-1:0);
   bar.innerHTML=sorted.map(w=>{const fi=cgFw.indexOf(w),done=fi>=0;const col=done?FCH[fi%FCH.length]:'var(--t2)';return `<div class="wb-item${done?' done fa':''}"><div class="wb-dot" style="color:${col}"></div><span style="color:${done?col:'var(--t2)'}">${w}</span></div>`;}).join('');
-  bar.scrollLeft=0;// scroll to show unfound
+  bar.scrollLeft=0;
 }
 function cgUpdProg(){
   const tot=cgPl.length,done=cgFw.length,pct=tot?Math.round(done/tot*100):0;
@@ -1272,33 +1273,37 @@ function newGame(){
 }
 
 function renderBoard(sz){
-  const bEl=$('board'),wrap=$('bwrap'),svg=$('board-svg');if(!bEl||!wrap||!svg)return;
-  const cp=computeCpx('gArea',sz),gap=2,pad=6,tot=sz*cp+(sz-1)*gap+pad*2;
-  bEl.style.gridTemplateColumns=`repeat(${sz},${cp}px)`;bEl.style.gap=gap+'px';bEl.style.padding=pad+'px';
-  wrap.style.width=wrap.style.height=tot+'px';svg.setAttribute('width',tot);svg.setAttribute('height',tot);svg.setAttribute('viewBox',`0 0 ${tot} ${tot}`);
+  const bEl=$('board'),wrap=$('bwrap'),svg=$('board-svg');
+  if(!bEl||!wrap||!svg)return;
+  const cp = computeCellSize('gArea', sz);
+  const gap=2, pad=6, tot=sz*cp+(sz-1)*gap+pad*2;
+  bEl.style.gridTemplateColumns=`repeat(${sz},${cp}px)`;
+  bEl.style.gap=gap+'px';
+  bEl.style.padding=pad+'px';
+  wrap.style.width=wrap.style.height=tot+'px';
+  svg.setAttribute('width',tot);
+  svg.setAttribute('height',tot);
+  svg.setAttribute('viewBox',`0 0 ${tot} ${tot}`);
   bEl.innerHTML='';
   for(let r=0;r<sz;r++)for(let c=0;c<sz;c++){
-    const el=document.createElement('div');el.className='cell';el.id=`g${r}_${c}`;
-    el.textContent=board[r][c]||'';el.style.width=el.style.height=cp+'px';el.style.fontSize=Math.max(8,Math.floor(cp*.38))+'px';
+    const el=document.createElement('div');
+    el.className='cell';
+    el.id=`g${r}_${c}`;
+    el.textContent=board[r][c]||'';
+    el.style.width=el.style.height=cp+'px';
+    el.style.fontSize=Math.max(10,Math.floor(cp*.42))+'px';
     bEl.appendChild(el);
   }
-  /* Touch drag events */
-  addBoardEvents(wrap,'gArea',sz,board,foundMap,
-    cells=>{ /* sel updated inside */ },
-    ()=>foundMap,
-    (r,c)=>`g${r}_${c}`,
-    ()=>checkSel(currentSel)
-  );
+  addBoardEvents(wrap,'gArea',sz,board,foundMap,cells=>{},()=>foundMap,(r,c)=>`g${r}_${c}`,()=>checkSel(currentSel));
 }
-// Unified touch/pointer drag for both boards
 let currentSel=[];
 function addBoardEvents(wrap,areaId,sz,bd,fm,onSel,getFm,cellId,onCommit){
   let active=false,startCell=null;
   const getSvgId=wrap.id==='bwrap'?'board-svg':'cg-board-svg';
-  const cpFn=()=>computeCpx(areaId,sz);
-
   function cellFromTouch(clientX,clientY){
-    const rect=wrap.getBoundingClientRect();const cp=cpFn();const gap=2;const pad=6;
+    const rect=wrap.getBoundingClientRect();
+    const cp = computeCellSize(areaId, sz);
+    const gap=2, pad=6;
     const x=clientX-rect.left-pad,y=clientY-rect.top-pad;
     if(x<0||y<0)return null;
     const c=Math.floor(x/(cp+gap)),r=Math.floor(y/(cp+gap));
@@ -1313,15 +1318,14 @@ function addBoardEvents(wrap,areaId,sz,bd,fm,onSel,getFm,cellId,onCommit){
   }
   function drawLine(cells){
     const svg=$(getSvgId);if(!svg||cells.length<2){clearLine();return;}
-    const cp=cpFn(),gap=2,pad=6;const xy=([r,c])=>[pad+c*(cp+gap)+cp/2,pad+r*(cp+gap)+cp/2];
+    const cp = computeCellSize(areaId, sz), gap=2, pad=6;
+    const xy=([r,c])=>[pad+c*(cp+gap)+cp/2,pad+r*(cp+gap)+cp/2];
     const[x1,y1]=xy(cells[0]),[x2,y2]=xy(cells[cells.length-1]);
     svg.innerHTML=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="rgba(0,85,255,.5)" stroke-width="${cp*.7}" stroke-linecap="round" opacity=".5"/>`;
   }
   function clearLine(){const svg=$(getSvgId);if(svg)svg.innerHTML='';}
   function clrSel(){wrap.querySelectorAll('.sel').forEach(e=>e.classList.remove('sel'));}
   function apSel(cells){cells.forEach(([r,c])=>{const el=$(cellId(r,c));if(el&&!getFm()[r+','+c])el.classList.add('sel');});}
-
-  // Pointer events (works for both touch and mouse)
   wrap.addEventListener('pointerdown',e=>{
     e.preventDefault();
     const t=cellFromTouch(e.clientX,e.clientY);
@@ -1329,7 +1333,6 @@ function addBoardEvents(wrap,areaId,sz,bd,fm,onSel,getFm,cellId,onCommit){
     active=true;startCell=t;currentSel=[t];clrSel();apSel([t]);
     wrap.setPointerCapture(e.pointerId);
   },{passive:false});
-
   wrap.addEventListener('pointermove',e=>{
     if(!active||!startCell)return;
     e.preventDefault();
@@ -1338,14 +1341,12 @@ function addBoardEvents(wrap,areaId,sz,bd,fm,onSel,getFm,cellId,onCommit){
     const ln=getLine(startCell[0],startCell[1],t[0],t[1]);
     currentSel=ln;clrSel();apSel(ln);drawLine(ln);
   },{passive:false});
-
   wrap.addEventListener('pointerup',e=>{
     if(!active)return;
     active=false;clearLine();
     onCommit();
     clrSel();currentSel=[];startCell=null;
   },{passive:false});
-
   wrap.addEventListener('pointercancel',e=>{
     active=false;clearLine();clrSel();currentSel=[];startCell=null;
   },{passive:false});
@@ -1372,7 +1373,6 @@ function renderWordBar(){
   const bar=$('wordBar');if(!bar)return;
   const sorted=[...words].sort((a,b)=>foundWords.includes(a)?1:foundWords.includes(b)?-1:0);
   bar.innerHTML=sorted.map(w=>{const fi=foundWords.indexOf(w),done=fi>=0;const col=done?FCH[fi%FCH.length]:'var(--t2)';return `<div class="wb-item${done?' done fa':''}"><div class="wb-dot" style="color:${col}"></div><span style="color:${done?col:'var(--t2)'}">${w}</span></div>`;}).join('');
-  // auto scroll to first unfound
   setTimeout(()=>{const first=bar.querySelector('.wb-item:not(.done)');if(first)first.scrollIntoView({behavior:'smooth',block:'nearest',inline:'start'});},100);
 }
 
@@ -1460,7 +1460,7 @@ function renderProfile(){
   const ri=getRankIdx(P.totalScore),rk=RANKS[ri];
   s('pfRPill',rk.icon+' '+rk.name.toUpperCase());s('pfRkEm',rk.icon);s('pfRkT',rk.name);s('rpC',P.totalScore+' pts');
   const rpF=$('rpF');
-  if(rk.next!==null){const nxt=RANKS[ri+1];const pct=Math.min(100,Math.round((P.totalScore-rk.min)/(rk.next-rk.min)*100));s('rpN',(rk.next-P.totalScore)+' to '+nxt.name);s('pfRkS',pct+'% towards '+nxt.name);if(rpF){rpF.style.width=pct+'%';rpF.style.background='linear-gradient(90deg,'+rk.col+','+(RANKS[ri+1]?.col||rk.col)+')';}}
+  if(rk.next!==null){const nxt=RANKS[ri+1];const pct=Math.min(100,Math.round((P.totalScore-rk.min)/(rk.next-rk.min)*100));s('rpN',(rk.next-P.totalScore)+' to '+nxt.name);s('pfRkS',pct+'% towards '+nxt.name);if(rpF){rpF.style.width=pct+'%';rpF.style.background='linear-gradient(90deg,'+rk.col+','+(RANKS[ri+1]?.col||rk.col)+')');}}
   else{s('rpN','MAX!');s('pfRkS','Legend rank achieved!');if(rpF){rpF.style.width='100%';rpF.style.background='linear-gradient(90deg,var(--R),var(--B))';}}
   const hEl=$('pfHist');
   if(!P.history?.length){if(hEl)hEl.innerHTML='<div style="font-size:11px;color:var(--t2);padding:12px 14px;font-family:JetBrains Mono,monospace">// No games yet!</div>';return;}
@@ -1508,23 +1508,24 @@ function fireConfetti(){
   setTimeout(()=>{if(wrap)wrap.innerHTML='';},5000);
 }
 
-/* ════════ RESIZE ════════ */
-window.addEventListener('resize',()=>{
-  if($('pg-game').classList.contains('on')&&!gameOver){
-    const sz=FIXED_GRID_SIZE,cp=computeCpx('gArea',sz),gap=2,pad=6,tot=sz*cp+(sz-1)*gap+pad*2;
-    $('board').style.gridTemplateColumns=`repeat(${sz},${cp}px)`;
-    document.querySelectorAll('#board .cell').forEach(el=>{el.style.width=el.style.height=cp+'px';el.style.fontSize=Math.max(8,Math.floor(cp*.38))+'px';});
-    $('bwrap').style.width=$('bwrap').style.height=tot+'px';
-    const svg=$('board-svg');svg.setAttribute('width',tot);svg.setAttribute('height',tot);svg.setAttribute('viewBox',`0 0 ${tot} ${tot}`);
+/* ════════ RESIZE HANDLER — AUTO-ADJUST ON ORIENTATION CHANGE ════════ */
+function handleResize() {
+  if($('pg-game').classList.contains('on') && !gameOver) {
+    renderBoard(FIXED_GRID_SIZE);
   }
-});
+  if($('pg-chgame').classList.contains('on') && cgPl && cgPl.length > 0) {
+    renderCGBoard(FIXED_GRID_SIZE);
+  }
+}
+
+window.addEventListener('resize', () => setTimeout(handleResize, 100));
+window.addEventListener('orientationchange', () => setTimeout(handleResize, 150));
 
 /* ════════ BOOT ════════ */
 window.onload=()=>{
   loadAll();
   applyTheme(ST.theme||'default');
   upChI();
-  // Set CSS header/footer heights based on actual screen
   const root=document.documentElement;
   const hh=Math.min(60,Math.max(48,Math.round(window.innerHeight*.08)));
   const fh=Math.min(56,Math.max(44,Math.round(window.innerHeight*.075)));
@@ -1532,6 +1533,7 @@ window.onload=()=>{
   root.style.setProperty('--header-h',hh+'px');
   root.style.setProperty('--footer-h',fh+'px');
   root.style.setProperty('--wordbar-h',wb+'px');
+  handleResize();
 };
 </script>
 </body>
