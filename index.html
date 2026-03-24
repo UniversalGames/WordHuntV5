@@ -8,6 +8,10 @@
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="theme-color" content="#000000"/>
 <title>WordHunt</title>
+
+<!-- PWA Manifest Link -->
+<link rel="manifest" href="/manifest.json">
+
 <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
 * {
@@ -1656,26 +1660,3 @@ window.onload=()=>{
 </head>
 <body>
 
-<script>
-// Method 1: Fetch API (Modern way)
-async function loadJSON() {
-    try {
-        const response = await fetch('data.json');
-        const data = await response.json();
-        console.log('JSON Data:', data);
-        console.log('App Name:', data.appName);
-        console.log('Grid Size:', data.gameSettings.gridSize);
-        
-        // Use data in your game
-        document.title = data.appName;
-    } catch (error) {
-        console.error('Error loading JSON:', error);
-    }
-}
-
-// Call the function
-loadJSON();
-</script>
-
-</body>
-</html>
