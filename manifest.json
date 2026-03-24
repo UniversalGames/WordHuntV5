@@ -1,11 +1,10 @@
 {
-  "appName": "WordHunt",
-  "version": "1.0",
-  "gameSettings": {
-    "gridSize": 8,
-    "defaultDifficulty": "normal",
-    "maxHints": 3
-  },
-  "themes": ["red", "blue", "green"],
-  "words": ["TIGER", "EAGLE", "SHARK", "WHALE"]
+  "name": "WordHunt",
+  "short_name": "WordHunt",
+  "description": "Word hunting game - find hidden words and earn coins",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#e8001e",
+  "orientation": "portrait"
 }
