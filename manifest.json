@@ -1,23 +1,12 @@
 {
-  "name": "Word Hunt v5",
-  "short_name": "WordHunt",
-  "description": "A fun and challenging word hunting game to test your vocabulary.",
-  "start_url": "index.html",
-  "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#007bff",
-  "orientation": "portrait",
-  "icons": [
-    {
-      "src": "https://universalgames.github.io/WordHuntv5/apple-touch-icon.png",
-      "sizes": "180x180",
-      "type": "image/png"
-    },
-    {
-      "src": "https://universalgames.github.io/WordHuntv5/apple-touch-icon.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    }
-  ]
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "universalgames.github",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "universalgames.github",
+  "start_url": "/",
+  "theme_color": "#ffffff",
+  "description": "{\n  \"name\": \"Word Hunt v5\",\n  \"short_name\": \"WordHunt\",\n  \"description\": \"A fun and challenging word hunting game to test your vocabulary.\",\n  \"start_url\": \"index.html\",\n  \"display\": \"standalone\",\n  \"background_color\": \"#ffffff\",\n  \"theme_color\": \"#007bff\",\n  \"orientation\": \"portrait\",\n  \"icons\": [\n    {\n      \"src\": \"https://universalgames.github.io/WordHuntv5/apple-touch-icon.png\",\n      \"sizes\": \"180x180\",\n      \"type\": \"image/png\"\n    },\n    {\n      \"src\": \"https://universalgames.github.io/WordHuntv5/apple-touch-icon.png\",\n      \"sizes\": \"512x512\",\n      \"type\": \"image/png\",\n      \"purpose\": \"any\"\n    }\n  ]\n}"
 }
