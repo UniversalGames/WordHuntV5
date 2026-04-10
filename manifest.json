@@ -1,23 +1,22 @@
 {
-  "name": "WordHunt",
+  "name": "Word Hunt v5",
   "short_name": "WordHunt",
-  "description": "Find hidden words, earn coins, and compete on leaderboard in this word hunting game",
-  "start_url": "/WordHuntV5/",
-  "scope": "/WordHuntV5/",
+  "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#e8001e",
+  "background_color": "#ffffff",
+  "theme_color": "#007bff",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "https://universalgames.github.io/WordHuntV5/icon-192.png",
-      "sizes": "192x192",
+      "src": "https://universalgames.github.io/WordHuntv5/apple-touch-icon.png",
+      "sizes": "180x180",
       "type": "image/png"
     },
     {
-      "src": "https://universalgames.github.io/WordHuntV5/icon-512.png",
+      "src": "https://universalgames.github.io/WordHuntv5/apple-touch-icon.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
